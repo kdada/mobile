@@ -129,14 +129,16 @@ func goIOSBuild(pkg *build.Package, bundleID string, archs []string) (map[string
 		buildO = n + ".app"
 	}
 	if buildX {
-		printcmd("mv %s %s", tmpdir+"/build/Release-iphoneos/main.app", buildO)
+		printcmd("cp %s %s", tmpdir+"/build/Release-iphoneos/main.app", buildO)
 	}
 	if !buildN {
 		// if output already exists, remove.
 		if err := os.RemoveAll(buildO); err != nil {
 			return nil, err
 		}
-		if err := os.Rename(tmpdir+"/build/Release-iphoneos/main.app", buildO); err != nil {
+
+		err := exec.Command("cp", "-r", tmpdir+"/build/Release-iphoneos/main.app", buildO).Run()
+		if err != nil {
 			return nil, err
 		}
 	}
