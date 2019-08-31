@@ -135,8 +135,9 @@ static void sendTouches(int change, NSSet* touches) {
 @end
 
 void runApp(void) {
+	char * argv[] = {};
 	@autoreleasepool {
-		UIApplicationMain(0, nil, nil, NSStringFromClass([GoAppAppDelegate class]));
+		UIApplicationMain(0, argv, nil, NSStringFromClass([GoAppAppDelegate class]));
 	}
 }
 
