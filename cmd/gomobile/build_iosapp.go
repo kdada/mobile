@@ -179,6 +179,7 @@ func detectTeamID() (string, error) {
 }
 
 func iosCopyAssets(pkg *build.Package, assets string, xcodeProjDir string) error {
+	iconDir := xcodeProjDir + "/main/Images.xcassets/AppIcon.appiconset"
 	dstAssets := xcodeProjDir + "/main/assets"
 	if err := mkdir(dstAssets); err != nil {
 		return err
@@ -215,6 +216,9 @@ func iosCopyAssets(pkg *build.Package, assets string, xcodeProjDir string) error
 		}
 		if info.IsDir() {
 			return nil
+		}
+		if rel, err := filepath.Rel(srcAssets, path); strings.HasPrefix(rel, "icons/") && err == nil {
+			return copyFile(iconDir+"/"+filepath.Base(path), path)
 		}
 		dst := dstAssets + "/" + path[len(srcAssets)+1:]
 		return copyFile(dst, path)
