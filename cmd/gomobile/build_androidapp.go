@@ -24,7 +24,7 @@ import (
 	"golang.org/x/mobile/internal/binres"
 )
 
-func goAndroidBuild(pkg *build.Package, androidArchs []string) (map[string]bool, error) {
+func goAndroidBuild(pkg *build.Package, assets string, androidArchs []string) (map[string]bool, error) {
 	ndkRoot, err := ndkRoot()
 	if err != nil {
 		return nil, err
@@ -184,6 +184,9 @@ func goAndroidBuild(pkg *build.Package, androidArchs []string) (map[string]bool,
 		iconPath string
 	}
 	assetsDir := filepath.Join(pkg.Dir, "assets")
+	if assets != "" {
+		assetsDir = assets
+	}
 	assetsDirExists := true
 	fi, err := os.Stat(assetsDir)
 	if err != nil {

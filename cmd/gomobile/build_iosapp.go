@@ -19,7 +19,7 @@ import (
 	"text/template"
 )
 
-func goIOSBuild(pkg *build.Package, bundleID string, archs []string) (map[string]bool, error) {
+func goIOSBuild(pkg *build.Package, assets string, bundleID string, archs []string) (map[string]bool, error) {
 	src := pkg.ImportPath
 	if buildO != "" && !strings.HasSuffix(buildO, ".app") {
 		return nil, fmt.Errorf("-o must have an .app for -target=ios")
@@ -90,7 +90,7 @@ func goIOSBuild(pkg *build.Package, bundleID string, archs []string) (map[string
 	}
 
 	// TODO(jbd): Set the launcher icon.
-	if err := iosCopyAssets(pkg, tmpdir); err != nil {
+	if err := iosCopyAssets(pkg, assets, tmpdir); err != nil {
 		return nil, err
 	}
 
@@ -178,13 +178,16 @@ func detectTeamID() (string, error) {
 	return cert.Subject.OrganizationalUnit[0], nil
 }
 
-func iosCopyAssets(pkg *build.Package, xcodeProjDir string) error {
+func iosCopyAssets(pkg *build.Package, assets string, xcodeProjDir string) error {
 	dstAssets := xcodeProjDir + "/main/assets"
 	if err := mkdir(dstAssets); err != nil {
 		return err
 	}
 
 	srcAssets := filepath.Join(pkg.Dir, "assets")
+	if assets != "" {
+		srcAssets = assets
+	}
 	fi, err := os.Stat(srcAssets)
 	if err != nil {
 		if os.IsNotExist(err) {

@@ -53,6 +53,8 @@ The default version is 7.0.
 Flag -androidapi sets the Android API version to compile against.
 The default and minimum is 15.
 
+Flag -assets sets the assets dir. If it's empty, use {main_pkg}/assets.
+
 The -bundleid flag is required for -target ios and sets the bundle ID to use
 with the app.
 
@@ -120,7 +122,7 @@ func runBuild(cmd *command) (err error) {
 			}
 			return nil
 		}
-		nmpkgs, err = goAndroidBuild(pkg, targetArchs)
+		nmpkgs, err = goAndroidBuild(pkg, buildAssets, targetArchs)
 		if err != nil {
 			return err
 		}
@@ -140,7 +142,7 @@ func runBuild(cmd *command) (err error) {
 		if buildBundleID == "" {
 			return fmt.Errorf("-target=ios requires -bundleid set")
 		}
-		nmpkgs, err = goIOSBuild(pkg, buildBundleID, targetArchs)
+		nmpkgs, err = goIOSBuild(pkg, buildAssets, buildBundleID, targetArchs)
 		if err != nil {
 			return err
 		}
@@ -234,6 +236,7 @@ var (
 	buildBundleID   string // -bundleid
 	buildIOSVersion string // -iosversion
 	buildAndroidAPI int    // -androidapi
+	buildAssets     string // -assets
 )
 
 func addBuildFlags(cmd *command) {
@@ -244,6 +247,7 @@ func addBuildFlags(cmd *command) {
 	cmd.flag.StringVar(&buildBundleID, "bundleid", "", "")
 	cmd.flag.StringVar(&buildIOSVersion, "iosversion", "7.0", "")
 	cmd.flag.IntVar(&buildAndroidAPI, "androidapi", minAndroidAPI, "")
+	cmd.flag.StringVar(&buildAssets, "assets", "", "")
 
 	cmd.flag.BoolVar(&buildA, "a", false, "")
 	cmd.flag.BoolVar(&buildI, "i", false, "")
